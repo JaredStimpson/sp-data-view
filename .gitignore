@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Local/private Spotify data
+data/*
+!data/.gitkeep
+*.zip
+StreamingHistory*.json
+Streaming_History_*.json
+endsong*.json
+
+# Logs and local configuration
+logs/*
+!logs/.gitkeep
+.env
+*.log
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Codex scratch/deliverable staging directories
+work/
+outputs/

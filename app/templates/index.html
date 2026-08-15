@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Resonance — Spotify Listening Analytics</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#overview" aria-label="Resonance home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>Resonance<small>Listening analytics</small></span>
+    </a>
+    <nav aria-label="Main navigation">
+      <button class="nav-item active" data-view="overview"><span>⌁</span> Overview</button>
+      <button class="nav-item" data-view="top"><span>↗</span> Top explorer</button>
+      <button class="nav-item" data-view="search"><span>⌕</span> Search history</button>
+      <button class="nav-item" data-view="diagnostics"><span>⚙</span> Diagnostics</button>
+    </nav>
+    <div class="privacy-note">
+      <span class="status-dot"></span>
+      <div><strong>Local & private</strong><small>Your history stays on this computer.</small></div>
+    </div>
+    <button id="import-again" class="secondary full">Import Spotify data</button>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <button id="menu-button" class="icon-button menu-button" aria-label="Open menu">☰</button>
+      <div class="range-controls">
+        <label>From <input id="start-date" type="date"></label>
+        <label>To <input id="end-date" type="date"></label>
+        <select id="year-filter" aria-label="Quick date range"><option value="">All time</option></select>
+        <button id="apply-range" class="compact">Apply</button>
+        <button id="clear-range" class="ghost compact">Clear</button>
+      </div>
+      <div class="top-actions">
+        <a class="icon-button" href="/api/export.csv" title="Export normalized CSV" aria-label="Export CSV">⇩</a>
+        <button id="theme-button" class="icon-button" title="Toggle contrast" aria-label="Toggle contrast">◐</button>
+      </div>
+    </header>
+
+    <section id="view-overview" class="view active">
+      <div class="view-heading">
+        <div><p class="eyebrow">Your complete history</p><h1>Listening overview</h1></div>
+        <p id="range-caption" class="muted">All time</p>
+      </div>
+      <div id="empty-state" class="empty-state hidden">
+        <div class="record"><span></span></div>
+        <p class="eyebrow">Start your archive</p>
+        <h2>Your music history belongs to you.</h2>
+        <p>Import a Spotify account-data ZIP or listening-history JSON file to see your personal dashboard. Processing and storage happen only on this computer.</p>
+        <button class="primary open-import">Choose Spotify export</button>
+      </div>
+      <div id="dashboard-content">
+        <div id="stat-grid" class="stat-grid skeleton"></div>
+        <div class="dashboard-grid">
+          <article class="card span-2">
+            <div class="card-heading"><div><p class="eyebrow">Rhythm over time</p><h2>Listening timeline</h2></div><span id="timeline-total" class="muted"></span></div>
+            <div id="timeline-chart" class="timeline-chart"></div>
+          </article>
+          <article class="card">
+            <div class="card-heading"><div><p class="eyebrow">Leading voices</p><h2>Top artists</h2></div><button class="text-button go-top">See all</button></div>
+            <div id="overview-artists" class="rank-list compact-list"></div>
+          </article>
+          <article class="card span-3">
+            <div class="card-heading"><div><p class="eyebrow">Daily pattern</p><h2>Listening calendar</h2></div><div class="legend"><span>Less</span><i></i><i></i><i></i><i></i><span>More</span></div></div>
+            <div id="calendar-chart" class="calendar-wrap"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-top" class="view">
+      <div class="view-heading"><div><p class="eyebrow">Rank every listen</p><h1>Top explorer</h1></div></div>
+      <div class="segmented" id="entity-tabs">
+        <button class="active" data-entity="artists">Artists</button>
+        <button data-entity="tracks">Tracks</button>
+        <button data-entity="albums">Albums</button>
+      </div>
+      <article class="card top-card">
+        <div class="top-options">
+          <label>Rank by<select id="rank-metric"><option value="time">Listening time</option><option value="plays">Play count</option><option value="days">Unique days</option></select></label>
+          <label>Show<select id="rank-limit"><option>10</option><option selected>25</option><option>50</option><option>100</option></select></label>
+        </div>
+        <div id="top-results" class="rank-list"></div>
+      </article>
+    </section>
+
+    <section id="view-search" class="view">
+      <div class="view-heading"><div><p class="eyebrow">Find any memory</p><h1>Search history</h1></div></div>
+      <div class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Search artists, tracks, or albums…" autocomplete="off"></div>
+      <div id="search-results" class="search-grid"><p class="muted">Type at least two characters to search your imported history.</p></div>
+    </section>
+
+    <section id="view-diagnostics" class="view">
+      <div class="view-heading"><div><p class="eyebrow">Understand every import</p><h1>Diagnostics</h1></div><button id="refresh-diagnostics" class="secondary">Refresh</button></div>
+      <div id="diagnostic-summary" class="stat-grid small"></div>
+      <div id="import-runs"></div>
+      <article class="danger-zone card">
+        <div><h2>Delete local data</h2><p>Remove every imported event and diagnostic record from this computer.</p></div>
+        <button id="delete-data" class="danger">Delete all data</button>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="import-dialog">
+    <form method="dialog" class="dialog-shell">
+      <button class="dialog-close icon-button" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">Private by design</p><h2>Import Spotify history</h2>
+      <p class="muted">Choose your downloaded ZIP, or one or more Spotify history JSON files. Nothing is uploaded to the internet.</p>
+      <label id="drop-zone" class="drop-zone">
+        <input id="file-input" type="file" accept=".zip,.json,application/zip,application/json" multiple>
+        <span class="upload-icon">⇧</span><strong>Drop files here or click to browse</strong><small>Spotify ZIP or JSON • up to 2 GB per request</small>
+      </label>
+      <div id="file-list" class="file-list"></div>
+      <div id="import-progress" class="import-progress hidden"><i></i><span>Reading and normalizing your history…</span></div>
+      <div id="import-result" class="import-result hidden"></div>
+      <button id="start-import" class="primary full" type="button" disabled>Import history</button>
+    </form>
+  </dialog>
+
+  <dialog id="detail-dialog">
+    <div class="dialog-shell detail-shell">
+      <button class="dialog-close icon-button" aria-label="Close">×</button>
+      <div id="detail-content"></div>
+    </div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>
