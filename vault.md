@@ -50,6 +50,7 @@ Build a GitHub-ready Python MVP that imports Spotify JSON files or export ZIP ar
 - `debug.bat`, `tools/diagnostics.py` — integrity/package/data/log checks plus debug launch.
 - `sample_data/spotify_extended_sample.json` — eight synthetic Spotify-format events for safe demos.
 - `tests/` — importer, ZIP safety, API, analytics, diagnostic-error, export, and deletion tests.
+- `outputs/NEW_CHAT_STARTUP_PLAN.md` — reusable checklist and `vault.md` template for organizing future project chats.
 
 Primary commands:
 
@@ -88,3 +89,9 @@ User supplied `spotify_listening_analytics_app_plan.md` and requested:
 - Ensure the app works with Spotify-provided listening-history data.
 
 Implementation interpretation: deliver a functional local MVP rather than only rewriting the plan, while preserving the supplied product roadmap in project documentation.
+
+### 2026-08-17 — New-chat organization guide
+
+User requested a simple but complete Markdown plan explaining how to start and organize future chats, including how to create and maintain `vault.md`.
+
+Implementation interpretation: provide a reusable startup checklist, recommended directory structure, ready-to-copy vault template, opening prompt, working rules, and end-of-chat handoff routine.
